@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Personal site for Adil Ganai - Technologist - Finance - Data</title>
+    <meta charset="utf-8" />
+    <meta
+      name="description"
+      content="Adil Ganai, financial Technologist, strategy, leadership, JPMorgan, Engineering Leader, Business Technologist"
+    />
+    <meta name="”robots”" content="index, follow" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, user-scalable=no"
+    />
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <noscript
+      ><link rel="stylesheet" href="assets/css/noscript.css"
+    /></noscript>
+    <!-- Google tag (gtag.js) -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-422ZT24QKZ"
+    ></script>
+
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+
+      gtag("config", "G-422ZT24QKZ");
+    </script>
+
+    <script
+      defer
+      data-site="adilg.com"
+      src="https://api.nepcha.com/js/nepcha-analytics.js"
+    ></script>
+
+     <script src="https://d3js.org/d3.v5.min.js"></script>
+    
+    <style>
+    #back-button {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      display: none; 
+    }
+  </style>
+
+  </head>
+  <body class="is-preload">
+    <div id="wrapper">
+    <div id="bg"></div>
+    <div id="overlay"></div>
+      <div id="main">
+            <!-- Header -->
+        <header id="header">
+          <div id="skills-graph"></div>
+        </header>
+    </div>
+
+        <!-- Footer -->
+        <footer id="footer">
+          <span class="copyright">&copy; adilG.com - Adil Ganai :</span>
+        </footer>
+    </div>
+    </div>
+    
+    <!-- d3 -->
+    <script>
+      var width = 800;
+      var height = 600;
+
+      var svg = d3
+        .select("#skills-graph")
+        .append("svg") //d3.select("body").append("svg")
+        .attr("width", width)
+        .attr("height", height);
+
+      // Draw the initial circle
+      var initialCircle = svg
+        .append("circle")
+        .attr("id", "initial-circle")
+        .attr("cx", width / 2)
+        .attr("cy", height / 2)
+        .attr("r", 60)
+        .attr("fill", "steelblue");
+
+      // Add 'my skills' label
+      svg
+        .append("text")
+        .attr("x", width / 2)
+        .attr("y", height / 2 + 5)
+        .attr("fill", "white")
+        .text("My Skills")
+        .attr("text-anchor", "middle");
+
+      // Function to create the network graph
+      function createNetworkGraph() {
+        // Remove the initial circle and text
+        initialCircle.remove();
+        d3.select("text").remove();
+
+        var color = d3.scaleOrdinal(d3.schemeCategory10);
+
+        d3.json("skills.json").then(function (graph) {
+          var simulation = d3
+            .forceSimulation()
+            .force(
+              "link",
+              d3
+                .forceLink()
+                .id(function (d) {
+                  return d.id;
+                })
+                .distance(70)
+            )
+            .force("charge", d3.forceManyBody())
+            .force("center", d3.forceCenter(width / 2, height / 2));
+
+          var link = svg
+            .append("g")
+            .attr("class", "links")
+            .selectAll("line")
+            .data(graph.links)
+            .enter()
+            .append("line")
+            .attr("stroke-width", function (d) {
+              return Math.sqrt(d.value);
+            });
+
+          var node = svg
+            .append("g")
+            .attr("class", "nodes")
+            .selectAll("g")
+            .data(graph.nodes)
+            .enter()
+            .append("g");
+
+          var circles = node
+            .append("circle")
+            .attr("r", 30)
+            .attr("fill", function (d) {
+              return color(d.group);
+            })
+            .call(
+              d3
+                .drag()
+                .on("start", dragstarted)
+                .on("drag", dragged)
+                .on("end", dragended)
+            );
+
+          var labels = node
+            .append("text")
+            .text(function (d) {
+              return d.id;
+            })
+            .attr("x", 0)
+            .attr("y", 4)
+            .attr("text-anchor", "middle");
+
+          simulation.nodes(graph.nodes).on("tick", ticked);
+
+          simulation.force("link").links(graph.links);
+
+          function ticked() {
+            link
+              .attr("x1", function (d) {
+                return d.source.x;
+              })
+              .attr("y1", function (d) {
+                return d.source.y;
+              })
+              .attr("x2", function (d) {
+                return d.target.x;
+              })
+              .attr("y2", function (d) {
+                return d.target.y;
+              });
+
+            node.attr("transform", function (d) {
+              return "translate(" + d.x + "," + d.y + ")";
+            });
+          }
+
+          function dragstarted(d) {
+            if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+            d.fx = d.x;
+            d.fy = d.y;
+          }
+
+          function dragged(d) {
+            d.fx = d3.event.x;
+            d.fy = d3.event.y;
+          }
+
+          function dragended(d) {
+            if (!d3.event.active) simulation.alphaTarget(0);
+            d.fx = null;
+            d.fy = null;
+          }
+        });
+      }
+
+      // Event listener for the initial circle
+      d3.select("#initial-circle").on("click", createNetworkGraph);
+    </script>
+    <script>
+      window.onload = function () {
+        document.body.classList.remove("is-preload");
+      };
+      window.ontouchmove = function () {
+        return false;
+      };
+      window.onorientationchange = function () {
+        document.body.scrollTop = 0;
+      };
+    </script>
+  </body>
+</html>

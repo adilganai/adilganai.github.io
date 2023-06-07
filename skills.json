@@ -1,0 +1,23 @@
+{
+  "nodes": [
+    { "id": "Management", "group": 1 },
+    { "id": "Technology", "group": 2 },
+    { "id": "Soft Skills", "group": 3 },
+    { "id": "Project Management", "group": 1 },
+    { "id": "Team Leadership", "group": 1 },
+    { "id": "Web Development", "group": 2 },
+    { "id": "D3.js", "group": 2 },
+    { "id": "Data Visualization", "group": 2 },
+    { "id": "Communication", "group": 3 },
+    { "id": "Problem Solving", "group": 3 }
+  ],
+  "links": [
+    { "source": "Management", "target": "Project Management", "value": 1 },
+    { "source": "Management", "target": "Team Leadership", "value": 1 },
+    { "source": "Technology", "target": "Web Development", "value": 1 },
+    { "source": "Technology", "target": "D3.js", "value": 1 },
+    { "source": "Technology", "target": "Data Visualization", "value": 1 },
+    { "source": "Soft Skills", "target": "Communication", "value": 1 },
+    { "source": "Soft Skills", "target": "Problem Solving", "value": 1 }
+  ]
+}
